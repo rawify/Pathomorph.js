@@ -60,11 +60,28 @@ Alternatively, download or clone the repository:
 git clone https://github.com/rawify/Pathomorph.js
 ```
 
-**Browser**
+## Usage
+
+Include the `stewart.min.js` file in your project:
 
 ```html
+<script src="js/vector2.min.js"></script>
 <script src="js/pathomorph.min.js"></script>
-<!-- Access via global `Pathomorph` -->
+<script>
+  <!-- Access via global `Pathomorph` -->
+</script>
+```
+
+Or in a Node.js project:
+
+```javascript
+const Pathomorph = require('pathomorph');
+```
+
+or
+
+```javascript
+import Pathomorph from "pathomorph";
 ```
 
 ---
