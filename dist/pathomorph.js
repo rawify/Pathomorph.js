@@ -142,7 +142,7 @@ const Pathomorph = {
      */
     "LineOffset": (a, b, offsetA = 0, offsetB = 0) => {
         const v = Vector2['fromPoints'](a, b);
-        const len = v['length']();
+        const len = v['norm']();
         if (offsetA + offsetB >= len || len === 0) return "";
 
         const u = v.scale(1 / len);
@@ -183,7 +183,7 @@ const Pathomorph = {
     "CurvedLine": (a, b, curvature = 0.5) => {
 
         let v = Vector2['fromPoints'](a, b);
-        const len = v.length();
+        const len = v['norm']();
 
         if (!len) return "";
 
@@ -192,9 +192,10 @@ const Pathomorph = {
         const p = v['perp']();
         const d = len * curvature;
 
-        return `M${a.x} ${a.y}` +
-            `C${a.x + (p.x + v.x) * d} ${a.y + (p.y + v.y) * d}` +
-            `${b.x + (p.x - v.x) * d} ${b.y + (p.y - v.y) * d} ${b.x} ${b.y}`;
+        return `M${a['x']} ${a['y']}` +
+            `C${a['x'] + (p['x'] + v['x']) * d} ${a['y'] + (p['y'] + v['y']) * d}` +
+            ` ${b['x'] + (p['x'] - v['x']) * d} ${b['y'] + (p['y'] - v['y']) * d}` +
+            ` ${b['x']} ${b['y']}`;
     },
 
     /**
@@ -325,15 +326,16 @@ const Pathomorph = {
         const p2 = { x: x + r1 * cos2, y: y + r1 * sin2 }; // outer end
         const p3 = { x: x + r1 * cos1, y: y + r1 * sin1 }; // outer start
 
-        // Sweep flags: inner arc goes forward, outer arc goes backward
-        const largeArc = (endAngle - startAngle) % TAU > Math.PI ? 1 : 0;
+        let delta = (endAngle - startAngle) % TAU;
+        if (delta < 0) delta += TAU;
+        const largeArc = delta > Math.PI ? 1 : 0;
 
         return (
-            `M${p0.x} ${p0.y}` +// Move → inner start
-            `A${r0} ${r0} 0 ${largeArc} 1 ${p1.x} ${p1.y}` +// Inner arc to inner end
-            `A${half} ${half} 0 0 1 ${p2.x} ${p2.y}` +// Cap at the outer radius
-            `A${r1} ${r1} 0 ${largeArc} 0 ${p3.x} ${p3.y}` +// Outer arc back to outer start
-            `A${half} ${half} 0 0 1 ${p0.x} ${p0.y}` +// Cap back to inner start and close
+            `M${p0.x} ${p0.y}` +
+            `A${r0} ${r0} 0 ${largeArc} 1 ${p1.x} ${p1.y}` + // Inner arc to inner end
+            `A${half} ${half} 0 0 0 ${p2.x} ${p2.y}` +       // Cap at the outer radius
+            `A${r1} ${r1} 0 ${largeArc} 0 ${p3.x} ${p3.y}` + // Outer arc back to outer start
+            `A${half} ${half} 0 0 0 ${p0.x} ${p0.y}` +       // Cap back to inner start and close
             `Z`);
     }
 };

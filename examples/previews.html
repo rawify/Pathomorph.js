@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Pathomorph Screenshots</title>
+  <script src="https://raw.org/js/vector2.min.js"></script>
+  <script src="../dist/pathomorph.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+      margin: 4px;
+    }
+
+    svg {
+      background: white;
+      border: 1px solid #ccc;
+    }
+
+    .preview {
+      text-align: center;
+      margin: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="previews"></div>
+
+  <script>
+    const W = 200, H = 150;
+
+    const previewFns = {
+      "Line": () => Pathomorph.Line({ "x": 20, "y": 60 }, { "x": 180, "y": 90 }),
+      "LineOff": () => Pathomorph.LineOffset({ "x": 20, "y": 60 }, { "x": 180, "y": 90 }, 10, 10),
+      "Rectangle": () => Pathomorph.Rectangle({ "x": 30, "y": 30 }, { "x": 170, "y": 120 }),
+      "Circle": () => Pathomorph.Circle({ "x": 100, "y": 75 }, 45),
+      "Ellipse": () => Pathomorph.Ellipse({ "x": 100, "y": 75 }, 60, 30, -30),
+      "Arc": () => Pathomorph.Arc({ "x": 100, "y": 75 }, 50, 0.2, Math.PI * 1.5),
+      "Polyline": () => Pathomorph.Polyline([{ "x": 20, "y": 30 }, { "x": 50, "y": 90 }, { "x": 100, "y": 60 }, { "x": 150, "y": 100 }]),
+      "Polygon": () => Pathomorph.Polygon([{ "x": 50, "y": 40 }, { "x": 80, "y": 25 }, { "x": 130, "y": 45 }, { "x": 140, "y": 90 }, { "x": 70, "y": 100 }]),
+      "RoundedRect": () => Pathomorph.RoundedRect({ "x": 30, "y": 30 }, { "x": 170, "y": 120 }, 15, 15),
+      "CurvedHorizontalLine": () => Pathomorph.CurvedHorizontalLine({ "x": 20, "y": 100 }, { "x": 180, "y": 50 }),
+      "CurvedVerticalLine": () => Pathomorph.CurvedVerticalLine({ "x": 40, "y": 20 }, { "x": 160, "y": 140 }),
+      "CurvedLine": () => Pathomorph.CurvedLine({ "x": 30, "y": 130 }, { "x": 170, "y": 30 }, 0.5),
+      "ArrowTip": () => Pathomorph.ArrowTip({ "x": 50, "y": 120 }, { "x": 150, "y": 50 }),
+      "FilletCorner": () => Pathomorph.FilletCorner({ "x": 30, "y": 130 }, { "x": 80, "y": 90 }, { "x": 160, "y": 130 }, 20),
+      "PartialPolyline": () => Pathomorph.PartialPolyline([{ "x": 20, "y": 30 }, { "x": 60, "y": 90 }, { "x": 100, "y": 50 }, { "x": 140, "y": 100 }], 0.6),
+      "RingSegment": () => Pathomorph.RingSegment({ "x": 100, "y": 75 }, 40, 20, 0, Math.PI * 1.5)
+    };
+
+    // These path types don't need red endpoint dots
+    const skipDots = new Set(["ArrowTip", "RoundedRect", "Polygon", "Circle", "Ellipse", "RingSegment"]);
+
+    function extractEndpoints(d) {
+  // Tokenize commands vs numbers
+  const tokens = d.match(/([MLHVCSQTAZ])|([-+]?\d*\.?\d+(?:e[-+]?\d+)?)/gi);
+  if (!tokens) return null;
+
+  let start = null;
+  let end = null;
+  let x = 0, y = 0;
+  let i = 0;
+
+  while (i < tokens.length) {
+    const cmd = tokens[i++];
+
+    switch (cmd) {
+      case 'M': {
+        const x0 = parseFloat(tokens[i++]);
+        const y0 = parseFloat(tokens[i++]);
+        x = x0; y = y0;
+        if (start === null) start = { x, y };
+        end = { x, y };
+        break;
+      }
+      case 'L': {
+        x = parseFloat(tokens[i++]);
+        y = parseFloat(tokens[i++]);
+        end = { x, y };
+        break;
+      }
+      case 'H': {
+        x = parseFloat(tokens[i++]);
+        end = { x, y };
+        break;
+      }
+      case 'V': {
+        y = parseFloat(tokens[i++]);
+        end = { x, y };
+        break;
+      }
+      case 'C': {
+        // skip control-point pairs (4 values)
+        i += 4;
+        x = parseFloat(tokens[i++]);
+        y = parseFloat(tokens[i++]);
+        end = { x, y };
+        break;
+      }
+      case 'S': {
+        // skip one control-point pair (2 values)
+        i += 2;
+        x = parseFloat(tokens[i++]);
+        y = parseFloat(tokens[i++]);
+        end = { x, y };
+        break;
+      }
+      case 'Q': {
+        // skip control-point pair (2 values)
+        i += 2;
+        x = parseFloat(tokens[i++]);
+        y = parseFloat(tokens[i++]);
+        end = { x, y };
+        break;
+      }
+      case 'T': {
+        x = parseFloat(tokens[i++]);
+        y = parseFloat(tokens[i++]);
+        end = { x, y };
+        break;
+      }
+      case 'A': {
+        // rx, ry, x-axis-rotation, large-arc-flag, sweep-flag
+        i += 5;
+        x = parseFloat(tokens[i++]);
+        y = parseFloat(tokens[i++]);
+        end = { x, y };
+        break;
+      }
+      case 'Z': {
+        // closepath brings us back to start
+        end = start;
+        break;
+      }
+      default:
+        // unhandled or lower-case (we expect absolute only)
+        break;
+    }
+  }
+
+  return start ? [start, end] : null;
+}
+
+    for (const [name, fn] of Object.entries(previewFns)) {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("width", W);
+      svg.setAttribute("height", H);
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+      if (name === "ArrowTip") {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        line.setAttribute("d", Pathomorph.Line({ "x": 50, "y": 120 }, { "x": 150, "y": 50 }));
+        line.setAttribute("stroke", "#ccc");
+        line.setAttribute("stroke-dasharray", "4");
+        svg.appendChild(line);
+      }
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      const d = fn();
+      path.setAttribute("d", d);
+      path.setAttribute("stroke", "black");
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke-width", "2");
+      path.setAttribute("stroke-linecap", "round");
+      svg.appendChild(path);
+
+      if (!skipDots.has(name)) {
+        const ends = extractEndpoints(name == "LineOff" ? Pathomorph.Line({ "x": 20, "y": 60 }, { "x": 180, "y": 90 }) : d);
+        if (ends) {
+          for (const p of ends) {
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("cx", p["x"]);
+            dot.setAttribute("cy", p["y"]);
+            dot.setAttribute("r", "3");
+            dot.setAttribute("fill", "red");
+            svg.appendChild(dot);
+          }
+        }
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "preview";
+     // wrapper.innerHTML = `<div><strong>${name}</strong></div>`;
+      wrapper.appendChild(svg);
+      document.getElementById("previews").appendChild(wrapper);
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-# Pathomorph
+# Pathomorph.js
 
 [![NPM Package](https://img.shields.io/npm/v/pathomorph.svg?style=flat)](https://npmjs.org/package/pathomorph "View this project on npm")
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
@@ -80,7 +80,9 @@ All functions return a string suitable for use as an SVG path `d` attribute.
 
 Creates a straight line.
 
-```ts
+![](image/line.jpg)
+
+```js
 Pathomorph.Line({ x: 0, y: 0 }, { x: 100, y: 0 })
 // → "M0 0L100 0"
 ```
@@ -91,6 +93,8 @@ Pathomorph.Line({ x: 0, y: 0 }, { x: 100, y: 0 })
 
 Creates a line shortened on both ends by fixed distances.
 
+![](image/lineoff.jpg)
+
 * Useful for offsetting lines for arrows or gaps.
 * Returns `""` if offsets exceed length.
 
@@ -100,11 +104,15 @@ Creates a line shortened on both ends by fixed distances.
 
 Generates a rectangular path between two diagonal points.
 
+![](image/rectangle.jpg)
+
 ---
 
 ### Circle(center, radius)
 
 Shortcut for `Ellipse(center, radius, radius)`. Produces a circular path.
+
+![](image/circle.jpg)
 
 ---
 
@@ -112,11 +120,15 @@ Shortcut for `Ellipse(center, radius, radius)`. Produces a circular path.
 
 Draws a full ellipse using two 180° arc segments.
 
+![](image/ellipse.jpg)
+
 ---
 
 ### Arc(center, radius, startAngle = 0, endAngle = TAU)
 
 Draws a circular arc from `startAngle` to `endAngle`. Handles full circles automatically.
+
+![](image/arc.jpg)
 
 ---
 
@@ -124,11 +136,15 @@ Draws a circular arc from `startAngle` to `endAngle`. Handles full circles autom
 
 Connects a series of points with straight lines.
 
+![](image/polyline.jpg)
+
 ---
 
 ### Polygon(points)
 
 Same as `Polyline` but closes the shape with a `"z"` command.
+
+![](image/polygon.jpg)
 
 ---
 
@@ -136,17 +152,23 @@ Same as `Polyline` but closes the shape with a `"z"` command.
 
 Creates a rectangle with rounded corners. The rounding radii are clamped automatically if too large.
 
+![](image/roundrect.jpg)
+
 ---
 
 ### CurvedHorizontalLine(p1, p2)
 
 Creates a horizontal S-curve between two points using a cubic Bézier.
 
+![](image/curvedH.jpg)
+
 ---
 
 ### CurvedVerticalLine(p1, p2)
 
 Same as `CurvedHorizontalLine` but curves vertically.
+
+![](image/curvedV.jpg)
 
 ---
 
@@ -156,6 +178,8 @@ Draws a cubic Bézier from `a` to `b`, with curvature perpendicular to the line 
 
 * `curvature` controls bend magnitude (positive = right-turn from A→B)
 
+![](image/curvedline.jpg)
+
 ---
 
 ### ArrowTip(a, b)
@@ -163,6 +187,8 @@ Draws a cubic Bézier from `a` to `b`, with curvature perpendicular to the line 
 Draws an arrowhead at `b`, pointing from `a` to `b`.
 
 * Returns a closed path suitable for filling.
+
+![](image/arrowtip.jpg)
 
 ---
 
@@ -172,6 +198,8 @@ Rounds the corner at `B` (where A→B→C forms a bend) with a circular arc of g
 
 * Automatically picks sweep direction.
 
+![](image/fillet.jpg)
+
 ---
 
 ### PartialPolyline(points, fraction)
@@ -180,11 +208,15 @@ Draws a partial polyline (first `fraction` ∈ \[0,1] of total length).
 
 * Useful for animation or stroke-drawing effects.
 
+![](image/partial.jpg)
+
 ---
 
 ### RingSegment(center, radius, thickness, startAngle, endAngle)
 
 Draws a donut slice (thick circular arc), capped at both ends with rounded edges.
+
+![](image/ringsegment.jpg)
 
 ---
 

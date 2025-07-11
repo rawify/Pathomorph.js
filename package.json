@@ -1,7 +1,7 @@
 {
     "name": "pathomorph",
     "title": "Pathomorph",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "homepage": "https://github.com/rawify/Pathomorph.js",
     "bugs": "https://github.com/rawify/Pathomorph.js/issues",
     "description": "The RAW library to create SVG path elements out of geometric primitives",
