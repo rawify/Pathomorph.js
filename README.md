@@ -7,7 +7,6 @@
 
 Pathomorph is a compact utility for generating SVG path strings from geometric primitives and curves. It offers both transformation routines—such as converting rectangles or circles to path data and on the other hand path construction helpers like curved connectors, arrows, and rounded corners.
 
-Rather than managing arc commands, sweep flags, or Bézier curves manually, Pathomorph provides simple function calls that generate valid SVG path `d` attributes.
 
 ---
 
@@ -37,7 +36,7 @@ Rather than managing arc commands, sweep flags, or Bézier curves manually, Path
   document.getElementById('arrow')
     .setAttribute('d', Pathomorph.ArrowTip(from, to));
 </script>
-````
+```
 
 ---
 
@@ -73,7 +72,6 @@ git clone https://github.com/rawify/Pathomorph.js
 ## API Documentation
 
 All functions return a string suitable for use as an SVG path `d` attribute.
-
 ---
 
 ### Line(p1, p2)
@@ -84,7 +82,7 @@ Creates a straight line.
 
 ```js
 Pathomorph.Line({ x: 0, y: 0 }, { x: 100, y: 0 })
-// → "M0 0L100 0"
+// "M0 0L100 0"
 ```
 
 ---
@@ -98,6 +96,11 @@ Creates a line shortened on both ends by fixed distances.
 * Useful for offsetting lines for arrows or gaps.
 * Returns `""` if offsets exceed length.
 
+```js
+Pathomorph.LineOffset({ x: 0, y: 0 }, { x: 100, y: 0 }, 10, 10)
+// "M10 0L90 0"
+```
+
 ---
 
 ### Rectangle(p1, p2)
@@ -105,6 +108,11 @@ Creates a line shortened on both ends by fixed distances.
 Generates a rectangular path between two diagonal points.
 
 ![](image/rectangle.jpg)
+
+```js
+Pathomorph.Rectangle({ x: 10, y: 10 }, { x: 60, y: 40 })
+// "M10 10L10 40L60 40L60 10z"
+```
 
 ---
 
@@ -114,6 +122,10 @@ Shortcut for `Ellipse(center, radius, radius)`. Produces a circular path.
 
 ![](image/circle.jpg)
 
+```js
+Pathomorph.Circle({ x: 50, y: 50 }, 20)
+```
+
 ---
 
 ### Ellipse(center, rx, ry, rotation = 0)
@@ -121,6 +133,11 @@ Shortcut for `Ellipse(center, radius, radius)`. Produces a circular path.
 Draws a full ellipse using two 180° arc segments.
 
 ![](image/ellipse.jpg)
+
+```js
+Pathomorph.Ellipse({ x: 60, y: 40 }, 30, 20)
+// Draws a full ellipse using two arcs
+```
 
 ---
 
@@ -130,6 +147,11 @@ Draws a circular arc from `startAngle` to `endAngle`. Handles full circles autom
 
 ![](image/arc.jpg)
 
+```js
+Pathomorph.Arc({ x: 100, y: 100 }, 50, 0, Math.PI)
+// Half-circle from 0 to π
+```
+
 ---
 
 ### Polyline(points)
@@ -137,6 +159,15 @@ Draws a circular arc from `startAngle` to `endAngle`. Handles full circles autom
 Connects a series of points with straight lines.
 
 ![](image/polyline.jpg)
+
+```js
+Pathomorph.Polyline([
+  { x: 10, y: 10 },
+  { x: 40, y: 20 },
+  { x: 80, y: 10 }
+])
+// "M10 10L40 20L80 10"
+```
 
 ---
 
@@ -146,6 +177,15 @@ Same as `Polyline` but closes the shape with a `"z"` command.
 
 ![](image/polygon.jpg)
 
+```js
+Pathomorph.Polygon([
+  { x: 10, y: 10 },
+  { x: 40, y: 20 },
+  { x: 80, y: 10 }
+])
+// "M10 10L40 20L80 10z"
+```
+
 ---
 
 ### RoundedRect(p1, p2, rx = 0, ry = 0)
@@ -153,6 +193,10 @@ Same as `Polyline` but closes the shape with a `"z"` command.
 Creates a rectangle with rounded corners. The rounding radii are clamped automatically if too large.
 
 ![](image/roundrect.jpg)
+
+```js
+Pathomorph.RoundedRect({ x: 20, y: 20 }, { x: 120, y: 80 }, 10, 10)
+```
 
 ---
 
@@ -162,6 +206,10 @@ Creates a horizontal S-curve between two points using a cubic Bézier.
 
 ![](image/curvedH.jpg)
 
+```js
+Pathomorph.CurvedHorizontalLine({ x: 20, y: 50 }, { x: 200, y: 90 })
+```
+
 ---
 
 ### CurvedVerticalLine(p1, p2)
@@ -169,6 +217,10 @@ Creates a horizontal S-curve between two points using a cubic Bézier.
 Same as `CurvedHorizontalLine` but curves vertically.
 
 ![](image/curvedV.jpg)
+
+```js
+Pathomorph.CurvedVerticalLine({ x: 100, y: 20 }, { x: 120, y: 140 })
+```
 
 ---
 
@@ -180,6 +232,10 @@ Draws a cubic Bézier from `a` to `b`, with curvature perpendicular to the line 
 
 ![](image/curvedline.jpg)
 
+```js
+Pathomorph.CurvedLine({ x: 30, y: 150 }, { x: 250, y: 50 }, 0.4)
+```
+
 ---
 
 ### ArrowTip(a, b)
@@ -189,6 +245,11 @@ Draws an arrowhead at `b`, pointing from `a` to `b`.
 * Returns a closed path suitable for filling.
 
 ![](image/arrowtip.jpg)
+
+```js
+Pathomorph.ArrowTip({ x: 50, y: 50 }, { x: 100, y: 100 })
+// Arrowhead pointing from (50, 50) to (100, 100)
+```
 
 ---
 
@@ -200,6 +261,15 @@ Rounds the corner at `B` (where A→B→C forms a bend) with a circular arc of g
 
 ![](image/fillet.jpg)
 
+```js
+Pathomorph.FilletCorner(
+  { x: 20, y: 60 },
+  { x: 60, y: 60 },
+  { x: 60, y: 20 },
+  10
+)
+```
+
 ---
 
 ### PartialPolyline(points, fraction)
@@ -210,6 +280,15 @@ Draws a partial polyline (first `fraction` ∈ \[0,1] of total length).
 
 ![](image/partial.jpg)
 
+```js
+Pathomorph.PartialPolyline([
+  { x: 0, y: 0 },
+  { x: 100, y: 0 },
+  { x: 100, y: 100 }
+], 0.5)
+// Draws the first 50% of the total polyline length
+```
+
 ---
 
 ### RingSegment(center, radius, thickness, startAngle, endAngle)
@@ -217,6 +296,17 @@ Draws a partial polyline (first `fraction` ∈ \[0,1] of total length).
 Draws a donut slice (thick circular arc), capped at both ends with rounded edges.
 
 ![](image/ringsegment.jpg)
+
+```js
+Pathomorph.RingSegment(
+  { x: 100, y: 100 },
+  60,
+  20,
+  0,
+  Math.PI / 2
+)
+// Quarter ring segment
+```
 
 ---
 
