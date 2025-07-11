@@ -257,8 +257,6 @@ Pathomorph.ArrowTip({ x: 50, y: 50 }, { x: 100, y: 100 })
 
 Rounds the corner at `B` (where A→B→C forms a bend) with a circular arc of given `radius`.
 
-* Automatically picks sweep direction.
-
 ![](image/fillet.jpg)
 
 ```js
