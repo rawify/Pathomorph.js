@@ -255,7 +255,8 @@ Pathomorph.ArrowTip({ x: 50, y: 50 }, { x: 100, y: 100 })
 
 ### FilletCorner(A, B, C, radius)
 
-Rounds the corner at `B` (where A→B→C forms a bend) with a circular arc of given `radius`.
+Rounds the corner at `B` (where A→B→C forms a bend) with a circular arc of the given `radius`, using the mathematically derived method [explained here](https://raw.org/proof/rounded-corners-on-path-segment/).
+
 
 ![](image/fillet.jpg)
 
