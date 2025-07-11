@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathomorph Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        svg {
+            width: 100vw;
+            height: 100vh;
+            background: #f9f9f9;
+        }
+
+        path {
+            stroke: #333;
+            fill: none;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="../dist/pathomorph.min.js"></script>
+    <svg id="canvas"></svg>
+    <script>
+        // Demo
+        const svg = document.getElementById('canvas');
+        const w = svg.clientWidth;
+        const h = svg.clientHeight;
+        const rndPoint = () => ({ x: Math.random() * w, y: Math.random() * h });
+
+        const funcs = Object.keys(Pathomorph);
+        funcs.forEach(fn => {
+            let d = '';
+            switch (fn) {
+                case 'Line':
+                    d = Pathomorph.Line(rndPoint(), rndPoint()); break;
+                case 'LineOffset':
+                    const a = rndPoint(), b = rndPoint();
+                    d = Pathomorph.LineOffset(a, b, 20, 10); break;
+                case 'Rectangle':
+                    d = Pathomorph.Rectangle(rndPoint(), rndPoint()); break;
+                case 'Polyline':
+                    d = Pathomorph.Polyline(Array.from({ length: 5 }, rndPoint)); break;
+                case 'Polygon':
+                    d = Pathomorph.Polygon(Array.from({ length: 5 }, rndPoint)); break;
+                case 'Arc':
+                    const c = rndPoint(); d = Pathomorph.Arc(c, 50, 0, Math.PI); break;
+                case 'Circle':
+                    d = Pathomorph.Circle(rndPoint(), 40); break;
+                case 'Ellipse':
+                    d = Pathomorph.Ellipse(rndPoint(), 60, 30, Math.random() * 360); break;
+                case 'CurvedHorizontalLine':
+                    d = Pathomorph.CurvedHorizontalLine(rndPoint(), rndPoint()); break;
+                case 'CurvedVerticalLine':
+                    d = Pathomorph.CurvedVerticalLine(rndPoint(), rndPoint()); break;
+                case 'CurvedLine':
+                    d = Pathomorph.CurvedLine(rndPoint(), rndPoint(), 0.4); break;
+                case 'ArrowTip':
+                    d = Pathomorph.ArrowTip(rndPoint(), rndPoint()); break;
+                case 'RoundedRect':
+                    d = Pathomorph.RoundedRect(rndPoint(), rndPoint(), 20, 15); break;
+                case 'PartialPolyline':
+                    d = Pathomorph.PartialPolyline(Array.from({ length: 6 }, rndPoint), 0.6); break;
+            }
+            if (d) {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', d);
+                svg.appendChild(path);
+            }
+        });
+    </script>
+</body>
+
+</html>

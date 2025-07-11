@@ -1,0 +1,63 @@
+{
+    "name": "pathomorph",
+    "title": "Pathomorph",
+    "version": "0.0.1",
+    "homepage": "https://github.com/rawify/Pathomorph.js",
+    "bugs": "https://github.com/rawify/Pathomorph.js/issues",
+    "description": "The RAW library to create SVG path elements out of geometric primitives",
+    "keywords": [
+        "svg",
+        "path",
+        "primitives",
+        "arc",
+        "line",
+        "rect",
+        "polyline",
+        "arrow",
+        "partial path"
+    ],
+    "private": false,
+    "main": "./dist/pathomorph.js",
+    "module": "./dist/pathomorph.mjs",
+    "types": "./pathomorph.d.ts",
+    "browser": "./dist/pathomorph.min.js",
+    "unpkg": "./dist/pathomorph.min.js",
+    "readmeFilename": "README.md",
+    "exports": {
+        ".": {
+            "types": "./pathomorph.d.ts",
+            "require": "./dist/pathomorph.js",
+            "import": "./dist/pathomorph.mjs"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:rawify/Pathomorph.js.git"
+    },
+    "funding": {
+        "type": "github",
+        "url": "https://github.com/sponsors/rawify"
+    },
+    "author": {
+        "name": "Robert Eisele",
+        "email": "robert@raw.org",
+        "url": "https://raw.org/"
+    },
+    "license": "MIT",
+    "engines": {
+        "node": "*"
+    },
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "crude-build Pathomorph"
+    },
+    "devDependencies": {
+        "crude-build": "^0.1.0"
+    },
+    "dependencies": {
+        "@rawify/vector2": "^0.0.2"
+    }
+}

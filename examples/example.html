@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pathomorph.js</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+
+        svg {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="../dist/pathomorph.min.js"></script>
+    <script>
+
+        const W = window.innerWidth;
+        const H = window.innerHeight;
+
+        const elements = [
+            { _elem: "line", x1: Math.random() * W, x2: Math.random() * W, y1: Math.random() * H, y2: Math.random() * H, _fn: "Line", _attr: function () { return [{ x: this.x1, y: this.y1 }, { x: this.x2, y: this.y2 }] } },
+            { _elem: 'rect', x: Math.random() * W / 2, y: Math.random() * H / 2, width: Math.random() * W / 2, height: Math.random() * H / 2, _fn: "Rectangle", _attr: function () { return [{ x: this.x, y: this.y }, { x: this.x + this.width, y: this.y + this.height }] } },
+            { _elem: "circle", cx: Math.random() * W / 2, cy: Math.random() * H / 2, r: Math.random() * H / 3 + 20, _fn: "Circle", _attr: function () { return [{ x: this.cx, y: this.cy }, this.r] } },
+            { _elem: "ellipse", cx: Math.random() * W / 2, cy: Math.random() * H / 2, rx: Math.random() * W / 3 + 20, ry: Math.random() * H / 3 + 20, _fn: "Ellipse", _attr: function () { return [{ x: this.cx, y: this.cy }, this.rx, this.ry] } },
+            { _elem: 'rect', x: Math.random() * W / 2, y: Math.random() * H / 2, width: Math.random() * W / 2, height: Math.random() * H / 2, rx: 50, ry: 10, _fn: "RoundedRect", _attr: function () { return [{ x: this.x, y: this.y }, { x: this.x + this.width, y: this.y + this.height }, this.rx, this.ry] } }
+        ];
+
+        const NS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(NS, "svg");
+        svg.setAttribute("xmlns", NS);
+        svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+        document.body.appendChild(svg);
+
+        function createElem(elem, stroke = 'black', strokeWidth = 4) {
+            const e = document.createElementNS(NS, elem);
+            e.setAttribute("stroke", stroke);
+            e.setAttribute("stroke-width", strokeWidth);
+            return e;
+        }
+
+        for (let e of elements) {
+            let el = createElem(e._elem, "yellow", 4);
+            let pa = createElem("path", "black", 1);
+            el.setAttribute("fill", "none");
+            pa.setAttribute("fill", "none");
+
+            for (let ei in e) {
+                if (ei[0] === '_') continue;
+                el.setAttribute(ei, e[ei]);
+            }
+
+            pa.setAttribute("d", Pathomorph[e._fn].apply(null, e._attr()));
+
+            svg.appendChild(el);
+            svg.appendChild(pa);
+        }
+
+        const path = [0, 0, 0, 0, 0, 0, 0, 0, 0].map(x => ({ x: Math.random() * W, y: Math.random() * H }));
+
+        let el = createElem("path", "rgba(255,0,0,0.2)", 4);
+        let pa = createElem("path", "black", 1);
+        el.setAttribute("fill", "none");
+        pa.setAttribute("fill", "none");
+
+        el.setAttribute("d", Pathomorph.Polyline(path));
+
+        let loop = function (time) {
+
+            let p = time / 7000 % 1;
+
+            pa.setAttribute("d", Pathomorph.PartialPolyline(path, 1 - Math.abs(1 - 2 * p)));
+
+            requestAnimationFrame(loop)
+        };
+
+        requestAnimationFrame(function (time) {
+            start = time;
+            loop(time);
+        });
+
+        svg.appendChild(el);
+        svg.appendChild(pa);
+
+    </script>
+</body>
+
+</html>
