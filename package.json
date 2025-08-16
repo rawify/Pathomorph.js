@@ -1,10 +1,10 @@
 {
     "name": "pathomorph",
     "title": "Pathomorph",
-    "version": "0.0.3",
+    "version": "0.0.4",
+    "description": "The RAW library to create SVG path elements out of geometric primitives",
     "homepage": "https://github.com/rawify/Pathomorph.js",
     "bugs": "https://github.com/rawify/Pathomorph.js/issues",
-    "description": "The RAW library to create SVG path elements out of geometric primitives",
     "keywords": [
         "svg",
         "path",
@@ -19,17 +19,38 @@
     "private": false,
     "main": "./dist/pathomorph.js",
     "module": "./dist/pathomorph.mjs",
-    "types": "./pathomorph.d.ts",
     "browser": "./dist/pathomorph.min.js",
     "unpkg": "./dist/pathomorph.min.js",
-    "readmeFilename": "README.md",
+    "types": "./pathomorph.d.ts",
     "exports": {
         ".": {
-            "types": "./pathomorph.d.ts",
-            "require": "./dist/pathomorph.js",
-            "import": "./dist/pathomorph.mjs"
+            "import": {
+                "types": "./pathomorph.d.mts",
+                "default": "./dist/pathomorph.mjs"
+            },
+            "require": {
+                "types": "./pathomorph.d.ts",
+                "default": "./dist/pathomorph.js"
+            },
+            "browser": {
+                "types": "./pathomorph.d.ts",
+                "default": "./dist/pathomorph.min.js"
+            },
+            "default": {
+                "types": "./pathomorph.d.ts",
+                "default": "./dist/pathomorph.js"
+            }
+        },
+        "./package.json": "./package.json"
+    },
+    "typesVersions": {
+        "<4.7": {
+            "*": [
+                "pathomorph.d.ts"
+            ]
         }
     },
+    "sideEffects": false,
     "repository": {
         "type": "git",
         "url": "git@github.com:rawify/Pathomorph.js.git"
@@ -55,9 +76,9 @@
         "build": "crude-build Pathomorph"
     },
     "devDependencies": {
-        "crude-build": "^0.1.0"
+        "crude-build": "^0.1.2"
     },
     "dependencies": {
-        "@rawify/vector2": "^0.0.2"
+        "@rawify/vector2": "^0.0.6"
     }
 }

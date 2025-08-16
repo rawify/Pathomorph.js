@@ -188,4 +188,4 @@ declare namespace Pathomorph {
     ): string;
 }
 
-export = Pathomorph;
+export default Pathomorph;

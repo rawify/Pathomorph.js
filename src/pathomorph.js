@@ -1,5 +1,5 @@
 /**
- * @license Pathomorph v0.0.3 7/11/2025
+ * @license Pathomorph v0.0.4 8/16/2025
  * https://github.com/rawify/Pathomorph.js
  *
  * Copyright (c) 2025, Robert Eisele (https://raw.org/)
